@@ -35,6 +35,7 @@ a {
 import AppHeader from './Header';
 import Dashboard from './dashboard/Dashboard';
 import rosteredData from '../datasample.js';
+import firebase from 'firebase';
 
 export default {
     name: 'MainDashboard',
@@ -46,6 +47,7 @@ export default {
         return {
             msg: 'Hello',
             title: 'test',
+            stats: {},
             // statsData: rosteredData,
         };
     },

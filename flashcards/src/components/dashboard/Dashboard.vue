@@ -3,6 +3,7 @@
 <template>
 
 <div class="content">
+    <search></search>
     <h1 class="content__header">Dashboard</h1>
     <article class="panel">
         <div class="panel__header">
@@ -55,19 +56,21 @@
 </template>
 
 <script>
-
+import Search from '../Search.vue';
 import $ from 'jquery';
 import rosteredData from '../../datasample.js';
 
 export default {
     name: 'Dashboard',
+    components: {
+      Search,
+    },
     methods: {
         toggleStats: function(e) {
             var el = e.target;
             $(el).next(".panel__sublist").slideToggle();
         },
     },
-    props: ['stats'],
     data: function() {
         return {
             stats: rosteredData

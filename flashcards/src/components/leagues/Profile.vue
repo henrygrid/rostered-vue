@@ -5,6 +5,7 @@
 <div>
     <appHeader></appHeader>
     <div class="content">
+      <search></search>
 
       <!-- View Mode -->
       <div class="profile__container" v-if="!isEditing">
@@ -88,7 +89,7 @@
                     <a href="" v-on:click="cancelChange" class="profile__right__links__menu__item__link">Cancel</a>
                   </li>
                   <li class="profile__right__links__menu__item">
-                    <a href="" class="profile__right__links__menu__item__link">Delete League</a>
+                    <a href="" class="profile__right__links__menu__item__link" v-on:click="deleteLeague">Delete League</a>
                   </li>
                 </ul>
               </div>
@@ -133,19 +134,19 @@
               <div class="panel__body">
                 <ul class="panel__list">
                   <li class="panel__list__item" v-for="team in league.teams">
-                      <router-link :to="'/teams/profile/' + team.name.replace(/\s/g, '')" class="panel__list__item__title"><i class="fa fa-futbol panel__list__item__title__icon" aria-hidden="true"></i>
+                      <div class="panel__list__item__title"><i class="fa fa-futbol panel__list__item__title__icon" aria-hidden="true"></i>
                         {{team.name}}
                           <span class="right js-delete-team">
-                            <i class="fa fa-times red"></i>
+                            <i class="fa fa-times red" :id="team.name" v-on:click="deleteTeam"></i>
                           </span>
-                      </router-link>
+                      </div>
                   </li>
                   <li id="addForm" class="panel__list__item hidden">
                     <form class="panel__list__item__title" >
                       <input id="newTeam" class="panel__list__item__title__input" type="text" placeholder="Team Name"/>
                       <span class="right">
-                        <i class="fa fa-check green margin-right-20"></i>
-                        <i class="fa fa-times red"></i>
+                        <i class="fa fa-check green margin-right-20" v-on:click="addTeam"></i>
+                        <i class="fa fa-times red" v-on:click="hideAdd"></i>
                       </span>
                     </form>
                   </li>
@@ -165,16 +166,27 @@ import AppHeader from '../Header';
 import rosteredData from '../../datasample.js';
 import Router from 'vue-router';
 import $ from 'jquery';
+import Search from '../Search.vue';
+import firebase from "firebase";
 
 export default {
     name: 'LeagueProfile',
     components: {
-        AppHeader
+        AppHeader,
+        Search
     },
     data: function() {
-        let leagues = rosteredData.leagues;
+        // let leagues = rosteredData.leagues;
         let leagueId;
         let currentLeague;
+        let stats;
+
+        const dataBase = firebase.database().ref('data');
+        dataBase.on('value', (snapshot) => {
+          stats = snapshot.val();
+        });
+
+        let leagues = stats.leagues;
 
         leagues.map((league, i) => {
           if (league.name.replace(/\s/g, '') === this.$route.params.name) {
@@ -186,7 +198,9 @@ export default {
         const initialLeague = currentLeague;
 
         return {
+            leagues: leagues,
             league: currentLeague,
+            leagueId: leagueId,
             isEditing: false,
         }
     },
@@ -206,6 +220,10 @@ export default {
       saveChange: function(e) {
         e.preventDefault();
         this.cachedLeague = Object.assign({}, this.league);
+        let data = {
+          leagues: this.leagues
+        };
+        firebase.database().ref().set({data});
         this.isEditing = !this.isEditing;
         $(".js-profile-options").hide();
       },
@@ -215,9 +233,53 @@ export default {
         this.isEditing = !this.isEditing;
         $(".js-profile-options").hide();
       },
+      deleteLeague: function(e) {
+        e.preventDefault();
+        this.leagues.splice(this.leagueId, 1);
+        this.$router.push("/leagues");
+      },
       revealAdd: function(e) {
         e.preventDefault();
-        $("#addForm").slideToggle();
+        $("#addForm").slideDown();
+      },
+      addTeam: function(e) {
+        e.preventDefault();
+        let today = new Date();
+        let dd = today.getDate();
+        let mm = today.getMonth()+1; //January is 0!
+        let yyyy = today.getFullYear();
+
+        if(dd<10) {
+            dd = '0'+dd
+        }
+
+        if(mm<10) {
+            mm = '0'+mm
+        }
+
+        today = mm + '/' + dd + '/' + yyyy;
+        let newTeamName = $("#newTeam").val();
+        if(newTeamName !== "" && newTeamName !== null) {
+          let newTeam = {
+            name: newTeamName,
+            id: "",
+            players: [],
+            createdDate: today,
+          }
+          this.league.teams.push(newTeam);
+        }
+        $("#newTeam").val("");
+      },
+      hideAdd: function(e) {
+        e.preventDefault();
+        $("#addForm").slideUp();
+      },
+      deleteTeam: function(e) {
+        this.league.teams.map((team, i) => {
+          if (e.target.getAttribute("id") === team.name) {
+            this.league.teams.splice(i, 1);
+          }
+        });
       }
     }
 }

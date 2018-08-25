@@ -5,6 +5,7 @@
 <div>
     <appHeader></appHeader>
     <div class="content">
+        <search></search>
         <div class="panel panel__full-width">
             <div class="panel__header">
                 <h1 class="panel__title">Teams</h1>
@@ -27,6 +28,7 @@
 import AppHeader from '../Header';
 import rosteredData from '../../datasample.js';
 import Router from 'vue-router';
+import Search from '../Search.vue';
 
 var teams = [];
 
@@ -41,6 +43,7 @@ export default {
     name: 'TeamDashboard',
     components: {
         AppHeader,
+        Search
     },
     data: function() {
         return {

@@ -404,7 +404,7 @@ a {
     border-bottom-left-radius: 5px;
     border: none;
     height: 20px;
-    width: 80%;
+    width: 79%;
     font-size: 14px;
     z-index: 1001;
 }
@@ -428,6 +428,7 @@ a {
     width: calc(20% - 30px);
     z-index: 1001;
     vertical-align: top;
+    right: 5px;
 }
 
 .search__submit span {
@@ -446,6 +447,7 @@ a {
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
     z-index: 1000;
+    display: none;
 }
 
 #search-results .panel__list__item:first-child {

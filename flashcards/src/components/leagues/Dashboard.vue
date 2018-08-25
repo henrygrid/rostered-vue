@@ -5,6 +5,7 @@
 <div>
     <appHeader></appHeader>
     <div class="content">
+        <search></search>
         <div class="panel panel__full-width">
             <div class="panel__header">
                 <h1 class="panel__title">Leagues</h1>
@@ -27,15 +28,29 @@
 import AppHeader from '../Header';
 import rosteredData from '../../datasample.js';
 import Router from 'vue-router';
+import Search from '../Search.vue';
+import firebase from 'firebase';
 
 export default {
     name: 'LeagueDashboard',
     components: {
-        AppHeader
+        AppHeader,
+        Search
     },
     data: function() {
+        // let leagues = rosteredData.leagues;
+
+        let stats;
+
+        const dataBase = firebase.database().ref('data');
+        dataBase.on('value', (snapshot) => {
+          stats = snapshot.val();
+        });
+
+        let leagues = stats.leagues;
+
         return {
-            leagues: rosteredData.leagues
+            leagues: leagues
         }
     }
 }
