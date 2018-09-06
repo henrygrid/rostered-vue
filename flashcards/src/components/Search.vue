@@ -38,9 +38,8 @@ export default {
       dataBase.on('value', (snapshot) => {
         stats = snapshot.val();
       });
-
       let leagues = stats.leagues;
-
+      console.log(leagues); 
       leagues.map((league, i) => {
         leagueId = i;
         teams = leagues[leagueId].teams;

@@ -37,7 +37,7 @@ rosteredData.leagues.map((league) => {
         teams.push(team);
     });
 });
-console.log(teams);
+// console.log(teams);
 
 export default {
     name: 'TeamDashboard',

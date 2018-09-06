@@ -31,28 +31,38 @@ import Router from 'vue-router';
 import Search from '../Search.vue';
 import firebase from 'firebase';
 
+
 export default {
     name: 'LeagueDashboard',
     components: {
         AppHeader,
         Search
     },
+    // computed: {
+    //   getData: function() {
+    //     let stats = this.$store.getters.isData;
+    //     console.log(stats);
+    //     return stats;
+    //   },
+    // },
     data: function() {
         // let leagues = rosteredData.leagues;
 
-        let stats;
+        let stats = this.$store.state.stats;
 
-        const dataBase = firebase.database().ref('data');
-        dataBase.on('value', (snapshot) => {
-          stats = snapshot.val();
-        });
+
+        // const dataBase = firebase.database().ref('stats');
+        // dataBase.on('value', (snapshot) => {
+        //   stats = snapshot.val();
+        // });
+        // console.log(stats);
 
         let leagues = stats.leagues;
 
         return {
             leagues: leagues
         }
-    }
+    },
 }
 
 </script>
